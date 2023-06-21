@@ -1,0 +1,80 @@
+server {
+    server_name kittygramya.hopto.org;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+    }
+
+    location /admin/ {
+        proxy_pass http://127.0.0.1:8080;
+    }
+
+    location / {
+        root   /var/www/kittygram/;
+        index  index.html index.htm;
+        try_files $uri /index.html;
+    }
+
+    location /media/ {
+        root /var/www/kittygram/;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramya.hopto.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/kittygramya.hopto.org/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+server {
+    server_name easypeasy.hopto.org;
+
+    location /api/ {
+        # Эта команда определяет, куда нужно перенаправить запрос.
+        proxy_pass http://127.0.0.1:8000;
+    }
+
+    location /admin/ {
+        proxy_pass http://127.0.0.1:8000;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/easypeasy.hopto.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/easypeasy.hopto.org/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+server {
+    if ($host = easypeasy.hopto.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+
+    listen 80;
+    server_name 158.160.64.168 easypeasy.hopto.org;
+    return 404; # managed by Certbot
+
+
+}
+server {
+    if ($host = kittygramya.hopto.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+
+    listen 80;
+    server_name kittygramya.hopto.org;
+    return 404; # managed by Certbot
+
+
+}
